@@ -255,8 +255,8 @@ void cpp_output::gen_transition_base()
 		out << endl;
 	}
 
-	for (set<int>::const_iterator i = sc.parallel_target_sizes.begin(); i != sc.parallel_target_sizes.end(); ++i) {
-		const int sz = *i;
+	for (set<int>::const_iterator it = sc.parallel_target_sizes.begin(); it != sc.parallel_target_sizes.end(); ++it) {
+		const int sz = *it;
 
 		out << tab << "template<event E, class S";
 		for(int i = 0; i < sz; ++i) out << ", class D" << i;
@@ -467,7 +467,7 @@ void cpp_output::gen_state_parallel_base()
 	std::set<int> parallel_sizes;
 	for (scxml_parser::state_list::const_iterator istate = states.begin(); istate != states.end(); ++istate) {
 		if (istate->get()->type && *istate->get()->type == "parallel") {
-			parallel_sizes.insert(children(*istate->get()).size());
+			parallel_sizes.insert(static_cast<int>(children(*istate->get()).size()));
 		}
 	}
 
@@ -994,7 +994,7 @@ void cpp_output::gen_state(const scxml_parser::state &state)
 	}
 
 	if(state.initial.target.size()) {
-		const int sz = state.initial.target.size();
+		const int sz = static_cast<int>(state.initial.target.size());
 		if (sc.using_parallel) out << tab << tab << ret << " initial" << "(" << classname() << " &sc, eval_data &eval) { return transition";
 		else out << tab << tab << ret << " initial" << "(" << classname() << " &sc) { return transition";
 		if (sz > 1) out << sz;
@@ -1301,7 +1301,7 @@ void cpp_output::gen_sc()
 		out << tab << tab << "static std::string debug_name() { return \"scxml\"; }" << endl;
 	}
 
-	const int sz = sc.sc().initial.target.size();
+	const int sz = static_cast<int>(sc.sc().initial.target.size());
 	if (sc.using_parallel) out << tab << tab << ret << " initial(" << classname() << "&sc, eval_data &eval) { return transition";
 	else out << tab << tab << ret << " initial(" << classname() << "&sc) { return transition";
 	if(sz > 1) out << sz;

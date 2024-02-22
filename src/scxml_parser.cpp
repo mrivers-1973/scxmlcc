@@ -51,7 +51,7 @@ void scxml_parser::parse_scxml(const ptree &pt)
 			else if (std::regex_match(it->first, ignore_elements_re)) ; // ignore
 			else cerr << "warning: unknown item '" << it->first << "' in <scxml>" << endl;
 		}
-		if(m_scxml.initial.target.size() > 1) parallel_target_sizes.insert(m_scxml.initial.target.size());
+		if(m_scxml.initial.target.size() > 1) parallel_target_sizes.insert(static_cast<int>(m_scxml.initial.target.size()));
 
 		// if initial state is not set, use first state in document order
 		// also use first state for parallel states. Other children are entered implicit
@@ -288,7 +288,7 @@ boost::shared_ptr<scxml_parser::action> scxml_parser::parse_raise(const ptree &p
 		ac->type = "raise";
 		ac->attr["event"] = event;
 	}
-	catch (ptree_error &e) {
+	catch (ptree_error &) {
 		cerr << "error: '<raise>' must contain an 'event' attribute." << endl;
 		exit(1);
 	}
@@ -397,7 +397,7 @@ boost::shared_ptr<scxml_parser::transition> scxml_parser::parse_transition(const
 			using namespace boost::algorithm;
 			boost::optional<string> target(xmlattr->get_optional<string>("target"));
 			if(target) split(tr->target, *target, is_any_of(" "), token_compress_on);
-			if(tr->target.size() > 1) parallel_target_sizes.insert(tr->target.size());
+			if(tr->target.size() > 1) parallel_target_sizes.insert(static_cast<int>(tr->target.size()));
 			boost::optional<string> event = xmlattr->get_optional<string>("event");
 			if(event) split(tr->event, *event, is_any_of(" "), token_compress_on);
 			tr->type = xmlattr->get_optional<string>("type");
